@@ -28,3 +28,117 @@ paths:
 drop_paths:
   - "/api/candidatures/anticheating/"
   - "sentry_key="
+
+# Request Blocking Configuration
+blocking:
+  # Block patterns are regular expressions that match URLs to block
+  patterns:
+    # Analytics and Tracking
+    - "google-analytics\\.com"
+    - "analytics\\."
+    - "tracker\\."
+    - "tracking\\."
+    - "stats\\."
+    
+    # Tracking Pixels and Beacons
+    - "\\.(gif|png|jpg)\\?.*track"
+    - "beacon\\."
+    - "pixel\\."
+    
+    # Advertisement Related
+    - "doubleclick\\.net"
+    - "ads\\."
+    - "adserver\\."
+    
+    # Specific API Endpoints
+    - "api\\.example\\.com/tracking"
+    - "/api/candidatures/anticheating/"
+    - "sentry_key="
+
+# Browser Configuration
+browser:
+  # Viewport settings
+  viewport:
+    width: 1920
+    height: 1080
+  
+  # Browser identity
+  user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  
+  # Locale settings
+  locale: "en-US"
+  timezone: "America/New_York"
+  
+  # Debug settings
+  remote_debugging:
+    enabled: true
+    port: 9222
+    address: "0.0.0.0"
+  
+  # Performance settings
+  performance:
+    disable_gpu: true
+    disable_dev_shm_usage: true
+    no_sandbox: true
+
+# Logging Configuration
+logging:
+  level: "INFO"  # Can be DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s %(levelname)s %(message)s"
+  show_blocked_requests: true
+  show_allowed_requests: false  # Set to true to see all allowed requests in debug mode
+
+# Request Blocking Patterns
+block_patterns:
+  # Original patterns
+  - "api.hire.toggl.com/graph/candidate"
+  - "/api/candidatures/anticheating/"
+  - "sentry_key="
+  
+  # Anti-cheat and monitoring endpoints
+  - "/api/monitoring/focus"
+  - "/api/monitoring/blur"
+  - "/api/monitoring/visibility"
+  - "/api/monitoring/activity"
+  - "/api/monitoring/tabchange"
+  - "/api/monitoring/clipboard"
+  - "/api/monitoring/keystrokes"
+  - "/api/monitoring/screenshot"
+  - "/api/monitoring/recording"
+  - "/api/monitoring/browser"
+  - "/api/monitoring/window"
+  - "proctor"
+  - "proctoring"
+  - "monitor"
+  - "tracking"
+  
+  # Common analytics and tracking
+  - "google-analytics\\.com"
+  - "\\.(gif|png|jpg)\\?.*track"
+  - "analytics\\."
+  - "tracker\\."
+  - "fullstory\\.com"
+  - "hotjar\\.com"
+  - "mouseflow\\.com"
+  - "clarity\\.ms"
+  - "logrocket\\.com"
+
+# Debug Settings
+debug:
+  enabled: true
+  port: 9222
+  log_level: "INFO"
+  log_blocked_requests: true
+
+# Anti-Detection Settings
+anti_detection:
+  # Prevent window.blur detection
+  block_blur_events: true
+  # Prevent visibility change detection
+  block_visibility_events: true
+  # Prevent clipboard monitoring
+  block_clipboard_events: true
+  # Prevent tab change detection
+  block_tab_change_events: true
+  # Prevent focus monitoring
+  block_focus_events: true

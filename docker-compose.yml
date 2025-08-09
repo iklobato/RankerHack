@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  browser:
+    build: .
+    ports:
+      - "9222:9222"  # Chrome DevTools Protocol
+      - "3000:3000"  # Our application interface
+    volumes:
+      - ./config.yml:/app/config.yml  # Mount config file for easy updates
+    environment:
+      - NO_SANDBOX=1  # Required for running Chrome in Docker
+      - DISPLAY=:99  # For Xvfb
+    shm_size: '2gb'  # Shared memory size for browser stability
