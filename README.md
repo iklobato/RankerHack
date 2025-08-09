@@ -1,31 +1,17 @@
-# Remote Browser with Request Blocking
+# LLM-Powered Browser Agent
 
-This project runs a remote browser in a Docker container with the ability to block specific API requests based on patterns defined in a configuration file.
+This project provides a minimal, dockerized browser environment that can be controlled by an LLM agent.
 
 ## Features
 
-- Remote browser access with UI visibility
-- Configurable request blocking via patterns in `config.yml`
-- Request logging
-- Remote debugging support
-- Docker containerization
+- Dockerized environment with Chrome and Playwright.
+- An `agent.py` script as the entry point for the LLM agent.
+- A simple `BrowserController` in `app.py` to interact with the browser.
 
 ## Prerequisites
 
 - Docker
 - Docker Compose
-- X11 server (for Linux/macOS users)
-
-## Configuration
-
-Edit `config.yml` to configure request blocking patterns and browser settings:
-
-```yaml
-block_patterns:
-  - "google-analytics\\.com"  # Block Google Analytics
-  - "\\.(gif|png|jpg)\\?.*track"  # Block tracking pixels
-  # Add more patterns as needed
-```
 
 ## Usage
 
@@ -34,27 +20,12 @@ block_patterns:
    docker-compose up --build
    ```
 
-2. The browser will be accessible for remote debugging at:
-   ```
-   http://localhost:9222
-   ```
+2. The `agent.py` script will be executed automatically. You can modify this script to implement your agent's logic.
 
-3. Monitor the logs to see which requests are being blocked:
-   ```bash
-   docker-compose logs -f
-   ```
-
-4. To modify blocking patterns, edit `config.yml` and restart the container.
+3. The browser is running in headless mode. You can change this in `app.py` if you need a UI.
 
 ## Stopping the Service
 
 ```bash
 docker-compose down
 ```
-
-## Notes
-
-- The browser UI will be visible on the host machine
-- Blocked requests will be logged in the container output
-- The configuration file is mounted as a volume for easy updates
-- Remote debugging is available on port 9222
