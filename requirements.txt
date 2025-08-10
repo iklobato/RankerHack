@@ -5,5 +5,7 @@ pytesseract==0.3.10
 python-dotenv==1.0.0
 requests==2.31.0
 Pillow==10.1.0
-pytest-playwright==0.4.3
+pytest-playwright>=0.5.0
 playwright==1.40.0
+pyyaml==6.0.1
+aiohttp==3.9.3

@@ -1,67 +1,72 @@
+import asyncio
 import logging
-import re
-from functools import cached_property
-
 import yaml
-from mitmproxy import http
+from playwright.async_api import async_playwright
 
-logging.basicConfig(
-    level=logging.WARN,
-    format="%(asctime)s %(levelname)s %(message)s",
-    handlers=[logging.StreamHandler()],
-)
+class BrowserController:
+    def __init__(self, config_path='config.yml'):
+        self.page = None
+        self.context = None
+        self.browser = None
+        self.p = None
+        with open(config_path, 'r') as f:
+            self.config = yaml.safe_load(f)
 
+    async def start_browser(self):
+        browser_cfg = self.config.get('browser', {})
+        remote_debugging = browser_cfg.get('remote_debugging', {})
 
-class CustomProxy:
-    def __init__(self, config_file='config.yml'):
-        self.config = self.load_config(config_file)
-        self.handlers = self.load_handlers()
-        self.drop_paths = self.config.get('drop_paths', [])
-        logging.info(f"Loaded handlers: {self.handlers}")
+        args = [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage'
+        ]
 
-    @cached_property
-    def handler_paths(self):
-        return list(self.handlers.keys())
+        if remote_debugging.get('enabled'):
+            args.append(f"--remote-debugging-port={remote_debugging.get('port', 9222)}")
+            args.append(f"--remote-debugging-address={remote_debugging.get('address', '0.0.0.0')}")
 
-    def load_config(self, config_file):
-        with open(config_file) as f:
-            return yaml.load(f, Loader=yaml.FullLoader)
+        self.p = await async_playwright().start()
+        self.browser = await self.p.chromium.launch(
+            headless=True,
+            args=args
+        )
 
-    def load_handlers(self):
-        handlers = {}
-        for conf_dict in self.config.get('paths', {}):
-            handler_name = conf_dict.get('url_path')
-            handlers[handler_name] = self.load_handler(conf_dict.get('handler'))
-            handlers[handler_name].config = conf_dict
-        return handlers
+        context_args = {
+            'viewport': browser_cfg.get('viewport'),
+            'user_agent': browser_cfg.get('user_agent'),
+            'locale': browser_cfg.get('locale'),
+            'timezone_id': browser_cfg.get('timezone'),
+        }
+        # Filter out None values
+        context_args = {k: v for k, v in context_args.items() if v is not None}
 
-    def load_handler(self, handler):
-        module_name, function_name = handler.rsplit('.', 1)
-        module = __import__(module_name, fromlist=[function_name])
-        return getattr(module, function_name)
+        self.context = await self.browser.new_context(**context_args)
+        self.page = await self.context.new_page()
 
-    def request_in_handlers_path(self, request_path):
-        match = re.search('|'.join(self.handler_paths), request_path)
-        if not match:
-            return None
-        return self.handlers[match.group()]
+    async def close_browser(self):
+        try:
+            if self.page:
+                await self.page.close()
+            if self.context:
+                await self.context.close()
+            if self.browser:
+                await self.browser.close()
+        finally:
+            if self.p:
+                await self.p.stop()
 
-    def response(self, flow: http.HTTPFlow):
-        if flow.request.path in self.drop_paths:
-            logging.info(f"Dropping request to {flow.request.path}")
-            return
+    async def navigate(self, url):
+        try:
+            if not self.page:
+                raise RuntimeError("Browser not initialized. Call start_browser() first.")
+            await self.page.goto(url, wait_until='networkidle')
+            return True
+        except Exception as e:
+            logging.error(f"Navigation error: {str(e)}")
+            return False
 
-        handler = self.request_in_handlers_path(flow.request.path)
-        if handler:
-            logging.info(f"Intercepting request to {flow.request.path} using {handler.config}")
-            return handler(flow)
-
-        return flow
-
-
-addons = [CustomProxy()]
-
-if __name__ == '__main__':
-    from mitmproxy.tools.main import mitmdump
-
-    mitmdump(['-p', '8081', '-s', __file__])
+    async def get_content(self):
+        if not self.page:
+            raise RuntimeError("Browser not initialized. Call start_browser() first.")
+        return await self.page.content()
