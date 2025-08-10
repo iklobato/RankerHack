@@ -3,9 +3,7 @@ version: '3.8'
 services:
   browser:
     build: .
-    ports:
-      - "9222:9222"  # Chrome DevTools Protocol
-      - "3000:3000"  # Our application interface
+    
     volumes:
       - ./config.yml:/app/config.yml  # Mount config file for easy updates
     environment:

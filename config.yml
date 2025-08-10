@@ -34,26 +34,46 @@ blocking:
   # Block patterns are regular expressions that match URLs to block
   patterns:
     # Analytics and Tracking
-    - "google-analytics\\.com"
-    - "analytics\\."
-    - "tracker\\."
-    - "tracking\\."
-    - "stats\\."
+    - "google-analytics\.com"
+    - "analytics\."
+    - "tracker\."
+    - "tracking\."
+    - "stats\."
     
     # Tracking Pixels and Beacons
-    - "\\.(gif|png|jpg)\\?.*track"
-    - "beacon\\."
-    - "pixel\\."
+    - "\.(gif|png|jpg)\?.*track"
+    - "beacon\."
+    - "pixel\."
     
     # Advertisement Related
-    - "doubleclick\\.net"
-    - "ads\\."
-    - "adserver\\."
+    - "doubleclick\.net"
+    - "ads\."
+    - "adserver\."
     
     # Specific API Endpoints
-    - "api\\.example\\.com/tracking"
+    - "api\.example\.com/tracking"
     - "/api/candidatures/anticheating/"
     - "sentry_key="
+    - "api.hire.toggl.com/graph/candidate"
+    - "/api/monitoring/focus"
+    - "/api/monitoring/blur"
+    - "/api/monitoring/visibility"
+    - "/api/monitoring/activity"
+    - "/api/monitoring/tabchange"
+    - "/api/monitoring/clipboard"
+    - "/api/monitoring/keystrokes"
+    - "/api/monitoring/screenshot"
+    - "/api/monitoring/recording"
+    - "/api/monitoring/browser"
+    - "/api/monitoring/window"
+    - "proctor"
+    - "proctoring"
+    - "monitor"
+    - "fullstory\.com"
+    - "hotjar\.com"
+    - "mouseflow\.com"
+    - "clarity\.ms"
+    - "logrocket\.com" "
 
 # Browser Configuration
 browser:
@@ -88,40 +108,7 @@ logging:
   show_blocked_requests: true
   show_allowed_requests: false  # Set to true to see all allowed requests in debug mode
 
-# Request Blocking Patterns
-block_patterns:
-  # Original patterns
-  - "api.hire.toggl.com/graph/candidate"
-  - "/api/candidatures/anticheating/"
-  - "sentry_key="
-  
-  # Anti-cheat and monitoring endpoints
-  - "/api/monitoring/focus"
-  - "/api/monitoring/blur"
-  - "/api/monitoring/visibility"
-  - "/api/monitoring/activity"
-  - "/api/monitoring/tabchange"
-  - "/api/monitoring/clipboard"
-  - "/api/monitoring/keystrokes"
-  - "/api/monitoring/screenshot"
-  - "/api/monitoring/recording"
-  - "/api/monitoring/browser"
-  - "/api/monitoring/window"
-  - "proctor"
-  - "proctoring"
-  - "monitor"
-  - "tracking"
-  
-  # Common analytics and tracking
-  - "google-analytics\\.com"
-  - "\\.(gif|png|jpg)\\?.*track"
-  - "analytics\\."
-  - "tracker\\."
-  - "fullstory\\.com"
-  - "hotjar\\.com"
-  - "mouseflow\\.com"
-  - "clarity\\.ms"
-  - "logrocket\\.com"
+
 
 # Debug Settings
 debug:
